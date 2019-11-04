@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<request>
+    <request-type>GET-BALANCE</request-type>
+    <extra name="login2">654321</extra>
+    <extra name="password">pwd2</extra>
+</request>
