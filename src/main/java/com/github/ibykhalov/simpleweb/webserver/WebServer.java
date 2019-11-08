@@ -13,6 +13,8 @@ import org.slf4j.LoggerFactory;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class WebServer implements IWebServer {
     private static final Logger logger = LoggerFactory.getLogger(WebServer.class);
@@ -31,6 +33,8 @@ public class WebServer implements IWebServer {
     public void start() {
         ServerSocket server = startSocketServer();
 
+        ExecutorService threadPool = Executors.newFixedThreadPool(8);
+
         new Thread(() -> {
             try {
 
@@ -40,13 +44,15 @@ public class WebServer implements IWebServer {
                         Socket socket = server.accept();
                         logger.debug("accepted");
 
-                        new Thread(() -> processSocket2(socket)).start();
+                        threadPool.submit(()->processSocket2(socket));
+//                        new Thread(() -> processSocket2(socket)).start();
                     } catch (SocketTimeoutException soex) {
                         logger.debug("timeout");
                     }
                 }
 
                 server.close();
+                threadPool.shutdown();
             } catch (Exception ex) {
                 logger.error("", ex);
             }

@@ -8,7 +8,7 @@ public class DataSource {
     private static final String DB_URL = "jdbc:postgresql://localhost:5400/billing_test";
     private static final String DB_USER = "postgres";
     private static final String DB_PASSWORD = "docker";
-    private static final int CONN_POOL_SIZE = 5;
+    private static final int CONN_POOL_SIZE = 8;
 
     private BasicDataSource bds = new BasicDataSource();
 
