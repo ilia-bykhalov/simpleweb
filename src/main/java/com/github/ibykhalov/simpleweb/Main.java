@@ -18,7 +18,7 @@ public final class Main {
     public static void main(String[] args) {
         logger.info("starting with args" + Arrays.toString(args));
         Date start = new Date();
-
+        new EmployeeServer(8888).start();
 
         logger.info("finished in " + timeDiff(start));
     }

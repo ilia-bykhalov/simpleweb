@@ -1,5 +1,7 @@
 package com.github.ibykhalov.simpleweb.db;
 
+import org.apache.commons.dbcp2.BasicDataSource;
+
 import java.sql.*;
 import java.util.UUID;
 
@@ -11,9 +13,8 @@ public class Database implements IDatabase {
 
     @Override
     public boolean createUser(String login, String password) {
-        try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5400/billing_test",
-                                                                 "postgres", "docker"
-        )) {
+        BasicDataSource bds = DataSource.getInstance().getBds();
+        try (Connection  connection = bds.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(CREATE_USER_QUERY);
             statement.setObject(1, UUID.randomUUID());
             statement.setString(2, login);
@@ -22,7 +23,6 @@ public class Database implements IDatabase {
 
             boolean execute = statement.execute();
             int updateCount = statement.getUpdateCount();
-            System.out.println(updateCount);
             return updateCount == 1;
 
         } catch (SQLException e) {
@@ -33,9 +33,8 @@ public class Database implements IDatabase {
     @Override
     public UserBalance getUserBalance(String login, String password) {
 
-        try (Connection connection = DriverManager.getConnection("jdbc:postgresql://localhost:5400/billing_test",
-                                                                 "postgres", "docker"
-        )) {
+        BasicDataSource bds = DataSource.getInstance().getBds();
+        try (Connection  connection = bds.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(GET_BALANCE_QUERY);
             statement.setString(1, login);
 
@@ -67,9 +66,5 @@ public class Database implements IDatabase {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public interface IResultProcessor<T> {
-        T process(ResultSet resultSet) throws SQLException;
     }
 }

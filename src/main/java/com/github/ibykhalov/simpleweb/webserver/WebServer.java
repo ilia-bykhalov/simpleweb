@@ -36,13 +36,13 @@ public class WebServer implements IWebServer {
 
                 while (!isStopped) {
                     try {
-                        logger.info("listen");
+                        logger.debug("listen");
                         Socket socket = server.accept();
-                        logger.info("accepted");
+                        logger.debug("accepted");
 
                         new Thread(() -> processSocket2(socket)).start();
                     } catch (SocketTimeoutException soex) {
-                        logger.info("timeout");
+                        logger.debug("timeout");
                     }
                 }
 
@@ -56,7 +56,7 @@ public class WebServer implements IWebServer {
     private ServerSocket startSocketServer() {
         try {
             ServerSocket server = new ServerSocket(port);
-            server.setSoTimeout(100);
+            server.setSoTimeout(1000);
             logger.info("Listening for connection on port " + port + " ....");
             return server;
         } catch (Exception ex) {
@@ -72,7 +72,7 @@ public class WebServer implements IWebServer {
             connection.receiveRequestEntity((HttpEntityEnclosingRequest)httpRequest);
             HttpEntity entity = ((HttpEntityEnclosingRequest) httpRequest).getEntity();
             String reqestString = IOUtils.toString(entity.getContent());
-            logger.info("reqeust="+reqestString);
+            logger.debug("reqeust="+reqestString);
 
             Response response = requestHandler.execRequest(reqestString);
 
@@ -85,7 +85,7 @@ public class WebServer implements IWebServer {
 
             connection.flush();
 
-            logger.info("close");
+            logger.debug("close");
 
             socket.close();
         } catch (Exception ex) {
