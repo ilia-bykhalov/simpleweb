@@ -62,7 +62,7 @@ public class WebServer implements IWebServer {
     private ServerSocket startSocketServer() {
         try {
             ServerSocket server = new ServerSocket(port);
-            server.setSoTimeout(1000);
+            server.setSoTimeout(10);
             logger.info("Listening for connection on port " + port + " ....");
             return server;
         } catch (Exception ex) {

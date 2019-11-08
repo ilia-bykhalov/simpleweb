@@ -13,15 +13,14 @@ public class Database implements IDatabase {
 
     @Override
     public boolean createUser(String login, String password) {
-        BasicDataSource bds = DataSource.getInstance().getBds();
-        try (Connection  connection = bds.getConnection()) {
+        try (Connection  connection = DataSource.getInstance().getBds().getConnection()) {
             PreparedStatement statement = connection.prepareStatement(CREATE_USER_QUERY);
             statement.setObject(1, UUID.randomUUID());
             statement.setString(2, login);
             statement.setString(3, password);
             statement.setInt(4, 0);
 
-            boolean execute = statement.execute();
+            statement.execute();
             int updateCount = statement.getUpdateCount();
             return updateCount == 1;
 

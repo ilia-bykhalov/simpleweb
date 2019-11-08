@@ -1,7 +1,5 @@
-package com.github.ibykhalov.simpleweb;
+package com.github.ibykhalov.simpleweb.core;
 
-import com.github.ibykhalov.simpleweb.core.IProcessor;
-import com.github.ibykhalov.simpleweb.core.Processor;
 import com.github.ibykhalov.simpleweb.db.Database;
 import com.github.ibykhalov.simpleweb.webserver.IWebServer;
 import com.github.ibykhalov.simpleweb.webserver.Response;

@@ -5,25 +5,18 @@ import com.github.ibykhalov.simpleweb.xml.data.Request;
 import com.github.ibykhalov.simpleweb.xml.data.RequestType;
 import com.github.ibykhalov.simpleweb.xml.data.Response;
 import com.github.ibykhalov.simpleweb.xml.data.ResponseCode;
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
-import org.jdom.Document;
-import org.jdom.input.SAXBuilder;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
 import org.junit.Test;
 
 import java.io.IOException;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.net.URL;
 
+import static com.github.ibykhalov.simpleweb.TestUtils.assertXmlEquals;
+import static com.github.ibykhalov.simpleweb.TestUtils.getFileText;
 import static org.junit.Assert.assertEquals;
 
 public class XmlParserTest {
     @Test
     public void parseRegisterRequest() throws Exception {
-        String registerRequest = getFileText("register_request");
+        String registerRequest = getTestString("register_request");
 
         Request request = XmlParser.parseRequest(registerRequest);
 
@@ -34,7 +27,7 @@ public class XmlParserTest {
 
     @Test
     public void parseGetBalanceRequest() throws Exception {
-        String registerRequest = getFileText("get_balance_request");
+        String registerRequest = getTestString("get_balance_request");
 
         Request request = XmlParser.parseRequest(registerRequest);
 
@@ -45,19 +38,19 @@ public class XmlParserTest {
 
     @Test(expected = XmlParsingException.class)
     public void xmlExceptionOnParseError() throws Exception {
-        String registerRequest = getFileText("bad_request");
+        String registerRequest = getTestString("bad_request");
         XmlParser.parseRequest(registerRequest);
     }
 
     @Test(expected = XmlParsingException.class)
     public void xmlExceptionOnParseError2() throws Exception {
-        String registerRequest = getFileText("bad_request2");
+        String registerRequest = getTestString("bad_request2");
         XmlParser.parseRequest(registerRequest);
     }
 
     @Test(expected = XmlParsingException.class)
     public void xmlExceptionOnParseError3() throws Exception {
-        String registerRequest = getFileText("bad_request3");
+        String registerRequest = getTestString("bad_request3");
         XmlParser.parseRequest(registerRequest);
     }
 
@@ -66,12 +59,8 @@ public class XmlParserTest {
         Response okResponse = Response.successRegister();
 
         String serialized = XmlParser.serialize(okResponse);
-        String exprected = getFileText("register_response_ok");
+        String exprected = getTestString("register_response_ok");
         assertXmlEquals(exprected, serialized);
-    }
-
-    private void assertXmlEquals(String exprectedString, String actualString) throws Exception {
-        assertEquals(prettyAsXml(exprectedString), prettyAsXml(actualString));
     }
 
     @Test
@@ -79,7 +68,7 @@ public class XmlParserTest {
         Response errorResponse = Response.error(ResponseCode.UNKNOWN_ERROR);
 
         String serialized = XmlParser.serialize(errorResponse);
-        String exprected = getFileText("register_response_error");
+        String exprected = getTestString("register_response_error");
         assertXmlEquals(exprected, serialized);
     }
 
@@ -88,7 +77,7 @@ public class XmlParserTest {
         Response okResponse = Response.successGetBalance(99d);
 
         String serialized = XmlParser.serialize(okResponse);
-        String exprected = getFileText("get_balance_response_ok");
+        String exprected = getTestString("get_balance_response_ok");
         assertXmlEquals(exprected, serialized);
     }
 
@@ -97,20 +86,11 @@ public class XmlParserTest {
         Response errorResponse = Response.error(ResponseCode.PASSWORD_INCORRECT);
 
         String serialized = XmlParser.serialize(errorResponse);
-        String exprected = getFileText("get_balance_response_error");
+        String exprected = getTestString("get_balance_response_error");
         assertXmlEquals(exprected, serialized);
     }
 
-    private String getFileText(String fileName) throws IOException {
-        URL url = Resources.getResource("xmlparsertest/" + fileName + ".xml");
-        return Resources.toString(url, Charsets.UTF_8);
-    }
-
-    private static String prettyAsXml(String input) throws Exception {
-        Document xml = new SAXBuilder().build(new StringReader(input));
-        XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
-        StringWriter stringWriter = new StringWriter();
-        xmlOutputter.output(xml, stringWriter);
-        return stringWriter.toString();
+    private String getTestString(String fileName) throws IOException {
+        return getFileText("xmlparsertest/" + fileName + ".xml");
     }
 }

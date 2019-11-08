@@ -27,7 +27,6 @@ public class HttpClient {
             logger.info(response.getStatusLine().toString());
 
             HttpEntity entity = response.getEntity();
-            Header headers = entity.getContentType();
 
             String result = IOUtils.toString(entity.getContent());
             logger.info("result" + result);
