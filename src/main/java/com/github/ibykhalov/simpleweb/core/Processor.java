@@ -1,6 +1,7 @@
 package com.github.ibykhalov.simpleweb.core;
 
 import com.github.ibykhalov.simpleweb.db.IDatabase;
+import com.github.ibykhalov.simpleweb.db.UserBalance;
 import com.github.ibykhalov.simpleweb.xml.data.Request;
 import com.github.ibykhalov.simpleweb.xml.data.RequestType;
 import com.github.ibykhalov.simpleweb.xml.data.Response;
@@ -22,7 +23,21 @@ public class Processor implements IProcessor {
             boolean userRegistered = database.createUser(request.getLogin(), request.getPassword());
             return userRegistered ? successRegister() : error(ResponseCode.USER_ALREADY_EXISTS);
         } else {
-            return successRegister();
+            UserBalance userBalance = database.getUserBalance(request.getLogin(), request.getPassword());
+            if (userBalance.hasValue()) {
+                return Response.successGetBalance(userBalance.getValue());
+            } else {
+                switch (userBalance.getError()) {
+                    case USER_NOT_EXISTS:
+                        return Response.error(ResponseCode.USER_NOT_FOUND);
+
+                    case WRONG_PASSWORD:
+                        return Response.error(ResponseCode.PASSWORD_INCORRECT);
+
+                    default:
+                        return Response.error(ResponseCode.UNKNOWN_ERROR);
+                }
+            }
         }
     }
 }

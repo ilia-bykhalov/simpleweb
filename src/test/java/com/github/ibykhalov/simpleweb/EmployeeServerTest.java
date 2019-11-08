@@ -1,5 +1,6 @@
 package com.github.ibykhalov.simpleweb;
 
+import com.github.ibykhalov.simpleweb.db.Database;
 import com.github.ibykhalov.simpleweb.webserver.Response;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
@@ -37,6 +38,7 @@ public class EmployeeServerTest {
         server = new EmployeeServer(defaultPort);
         server.start();
         logger.info("serrver starts");
+        new Database().truncate();
     }
 
     @After
