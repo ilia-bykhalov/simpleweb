@@ -1,5 +1,6 @@
 package com.github.ibykhalov.simpleweb.webserver;
 
+import com.github.ibykhalov.simpleweb.exception.ServerStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,9 +24,9 @@ public final class WebServer implements IWebServer {
     private final int workersCount;
     private final IRequestHandler requestHandler;
 
-    private final ReentrantLock stopStartLock = new ReentrantLock();
+    private final ReentrantLock startStopLock = new ReentrantLock();
     private final AtomicBoolean isRunning = new AtomicBoolean(false);
-    private final AtomicReference<Thread> socketAccepterThread = new AtomicReference<>(new Thread());
+    private final AtomicReference<Thread> socketAccepterThread = new AtomicReference<>();
 
     public WebServer(int port, int workersCount, IRequestHandler requestHandler) {
         this.port = port;
@@ -36,31 +37,42 @@ public final class WebServer implements IWebServer {
     @Override
     public void start() {
         try {
-            stopStartLock.lock();
+            startStopLock.lock();
             if (isRunning.compareAndSet(false, true)) {
-                socketAccepterThread.set(startServer());
+                socketAccepterThread.set(startAccepterThread());
+            } else {
+                throw new ServerStateException("WebServer already running!");
             }
         } finally {
-            stopStartLock.unlock();
+            startStopLock.unlock();
         }
     }
 
     @Override
     public void stop() {
         try {
-            stopStartLock.lock();
-            isRunning.set(false);
-            try {
-                socketAccepterThread.get().join();
-            } catch (InterruptedException ex) {
-                logger.error("error while shutting down", ex);
+            startStopLock.lock();
+            if (isRunning.compareAndSet(true, false)) {
+                awaitAccepterThreadTerminate();
+            } else {
+                throw new ServerStateException("WebServer already stopped!");
             }
         } finally {
-            stopStartLock.unlock();
+            startStopLock.unlock();
         }
     }
 
-    private Thread startServer() {
+    private void awaitAccepterThreadTerminate() {
+        try {
+            if (socketAccepterThread.get() != null) {
+                socketAccepterThread.get().join();
+            }
+        } catch (InterruptedException ex) {
+            logger.error("error while shutting down", ex);
+        }
+    }
+
+    private Thread startAccepterThread() {
         ServerSocket server = startSocketServer();
         ExecutorService threadPool = Executors.newFixedThreadPool(workersCount);
 
@@ -93,16 +105,16 @@ public final class WebServer implements IWebServer {
 
     private void shutDownQuietly(ServerSocket server, ExecutorService executorService) {
         try {
-            server.close();
+            executorService.shutdown();
+            executorService.awaitTermination(10, TimeUnit.SECONDS);
         } catch (Exception ex) {
-            logger.error("Error while closing web server", ex);
+            logger.error("Error while shutting down web workers pool", ex);
         }
 
         try {
-            executorService.shutdown();
-            executorService.awaitTermination(2, TimeUnit.SECONDS);
+            server.close();
         } catch (Exception ex) {
-            logger.error("Error while shutting down web workers pool", ex);
+            logger.error("Error while closing web server", ex);
         }
     }
 
