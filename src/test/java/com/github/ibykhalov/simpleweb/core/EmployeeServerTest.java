@@ -1,8 +1,8 @@
 package com.github.ibykhalov.simpleweb.core;
 
 import com.github.ibykhalov.simpleweb.HttpClient;
-import com.github.ibykhalov.simpleweb.db.Database;
-import com.github.ibykhalov.simpleweb.webserver.Response;
+import com.github.ibykhalov.simpleweb.TestUtils;
+import com.github.ibykhalov.simpleweb.webserver.HttpResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -22,10 +22,10 @@ public class EmployeeServerTest {
 
     @Before
     public void setUp() throws Exception {
-        server = new EmployeeServer(TEST_SERVER_PORT);
+        server = new EmployeeServer(TEST_EMPLOYEE_SERVER_CONFIG);
         server.start();
         logger.info("server starts");
-        new Database().truncate();
+        TestUtils.truncateTable();
     }
 
     @After
@@ -35,7 +35,7 @@ public class EmployeeServerTest {
 
     @Test
     public void register() throws Exception {
-        Response result = httpClient.doPost(TEST_SERVER_IP, TEST_SERVER_PORT, getTestString("register_request"));
+        HttpResponse result = httpClient.doPost(TEST_SERVER_IP, TEST_SERVER_PORT, getTestString("register_request"));
 
         assertEquals(200, result.getStatus());
         assertXmlEquals(getTestString("register_request_response_ok"), result.getBody());
@@ -44,7 +44,7 @@ public class EmployeeServerTest {
     @Test
     public void registerTwice() throws Exception {
         httpClient.doPost(TEST_SERVER_IP, TEST_SERVER_PORT, getTestString("register_request"));
-        Response result = httpClient.doPost(TEST_SERVER_IP, TEST_SERVER_PORT, getTestString("register_request"));
+        HttpResponse result = httpClient.doPost(TEST_SERVER_IP, TEST_SERVER_PORT, getTestString("register_request"));
 
         assertEquals(200, result.getStatus());
         assertXmlEquals(getTestString("register_request_response_error"), result.getBody());
@@ -54,7 +54,7 @@ public class EmployeeServerTest {
     public void getBalance() throws Exception {
         httpClient.doPost(TEST_SERVER_IP, TEST_SERVER_PORT, getTestString("register_request"));
 
-        Response result = httpClient.doPost(TEST_SERVER_IP, TEST_SERVER_PORT, getTestString("get_balance_request"));
+        HttpResponse result = httpClient.doPost(TEST_SERVER_IP, TEST_SERVER_PORT, getTestString("get_balance_request"));
 
         assertEquals(200, result.getStatus());
         assertXmlEquals(getTestString("get_balance_request_response"), result.getBody());
@@ -62,7 +62,7 @@ public class EmployeeServerTest {
 
     @Test
     public void getBalanceOnUserNotFound() throws Exception {
-        Response result =
+        HttpResponse result =
                 httpClient.doPost(TEST_SERVER_IP, TEST_SERVER_PORT, getTestString("get_balance_user_not_found"));
 
         assertEquals(200, result.getStatus());
@@ -73,7 +73,7 @@ public class EmployeeServerTest {
     public void getBalanceOnPasswordIncorrect() throws Exception {
         httpClient.doPost(TEST_SERVER_IP, TEST_SERVER_PORT, getTestString("register_request"));
 
-        Response result =
+        HttpResponse result =
                 httpClient.doPost(TEST_SERVER_IP, TEST_SERVER_PORT, getTestString("get_balance_password_incorrect"));
 
         assertEquals(200, result.getStatus());
@@ -82,7 +82,7 @@ public class EmployeeServerTest {
 
     @Test
     public void badRequestType() throws Exception {
-        Response result = httpClient.doPost(TEST_SERVER_IP, TEST_SERVER_PORT, getTestString("bad_request_type"));
+        HttpResponse result = httpClient.doPost(TEST_SERVER_IP, TEST_SERVER_PORT, getTestString("bad_request_type"));
 
         assertEquals(200, result.getStatus());
         assertXmlEquals(getTestString("bad_request_type_response"), result.getBody());
@@ -91,7 +91,7 @@ public class EmployeeServerTest {
 
     @Test
     public void badRequestXml() throws Exception {
-        Response result = httpClient.doPost(TEST_SERVER_IP, TEST_SERVER_PORT, getTestString("bad_request_xml"));
+        HttpResponse result = httpClient.doPost(TEST_SERVER_IP, TEST_SERVER_PORT, getTestString("bad_request_xml"));
 
         assertEquals(200, result.getStatus());
         assertXmlEquals(getTestString("bad_request_xml_response"), result.getBody());

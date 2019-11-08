@@ -20,10 +20,12 @@ public class WebServer implements IWebServer {
     private static final Logger logger = LoggerFactory.getLogger(WebServer.class);
 
     private final int port;
+    private final int workersCount;
     private final IRequestHandler requestHandler;
 
-    public WebServer(int port, IRequestHandler requestHandler) {
+    public WebServer(int port, int workersCount, IRequestHandler requestHandler) {
         this.port = port;
+        this.workersCount = workersCount;
         this.requestHandler = requestHandler;
     }
 
@@ -33,7 +35,7 @@ public class WebServer implements IWebServer {
     public void start() {
         ServerSocket server = startSocketServer();
 
-        ExecutorService threadPool = Executors.newFixedThreadPool(8);
+        ExecutorService threadPool = Executors.newFixedThreadPool(workersCount);
 
         new Thread(() -> {
             try {
@@ -80,10 +82,10 @@ public class WebServer implements IWebServer {
             String reqestString = IOUtils.toString(entity.getContent());
             logger.debug("reqeust="+reqestString);
 
-            Response response = requestHandler.execRequest(reqestString);
+            HttpResponse response = requestHandler.execRequest(reqestString);
 
             BasicStatusLine d = new BasicStatusLine(HttpVersion.HTTP_1_1,response.getStatus(),null);
-            HttpResponse httpResponse = DefaultHttpResponseFactory.INSTANCE.newHttpResponse(d, null);
+            org.apache.http.HttpResponse httpResponse = DefaultHttpResponseFactory.INSTANCE.newHttpResponse(d, null);
             StringEntity d1 = new StringEntity(response.getBody());
             httpResponse.setEntity(d1);
             connection.sendResponseHeader(httpResponse);

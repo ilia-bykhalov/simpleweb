@@ -1,10 +1,10 @@
 package com.github.ibykhalov.simpleweb.xml;
 
 import com.github.ibykhalov.simpleweb.exception.XmlParsingException;
-import com.github.ibykhalov.simpleweb.xml.data.Request;
-import com.github.ibykhalov.simpleweb.xml.data.RequestType;
-import com.github.ibykhalov.simpleweb.xml.data.Response;
-import com.github.ibykhalov.simpleweb.xml.data.ResponseCode;
+import com.github.ibykhalov.simpleweb.data.Request;
+import com.github.ibykhalov.simpleweb.data.RequestType;
+import com.github.ibykhalov.simpleweb.data.Response;
+import com.github.ibykhalov.simpleweb.data.ResponseCode;
 import org.junit.Test;
 
 import java.io.IOException;

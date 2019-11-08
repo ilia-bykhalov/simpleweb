@@ -1,4 +1,4 @@
-package com.github.ibykhalov.simpleweb.xml.data;
+package com.github.ibykhalov.simpleweb.data;
 
 public enum RequestType {
     REGISTER,

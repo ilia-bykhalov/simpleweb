@@ -1,4 +1,4 @@
-package com.github.ibykhalov.simpleweb.xml.data;
+package com.github.ibykhalov.simpleweb.data;
 
 import com.google.common.base.Objects;
 

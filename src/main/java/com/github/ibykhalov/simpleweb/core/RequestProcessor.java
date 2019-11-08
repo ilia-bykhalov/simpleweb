@@ -1,24 +1,23 @@
 package com.github.ibykhalov.simpleweb.core;
 
-import com.github.ibykhalov.simpleweb.db.IDatabase;
+import com.github.ibykhalov.simpleweb.db.IUserInfoDAO;
 import com.github.ibykhalov.simpleweb.db.UserBalance;
-import com.github.ibykhalov.simpleweb.xml.data.Request;
-import com.github.ibykhalov.simpleweb.xml.data.RequestType;
-import com.github.ibykhalov.simpleweb.xml.data.Response;
-import com.github.ibykhalov.simpleweb.xml.data.ResponseCode;
+import com.github.ibykhalov.simpleweb.data.Request;
+import com.github.ibykhalov.simpleweb.data.RequestType;
+import com.github.ibykhalov.simpleweb.data.Response;
+import com.github.ibykhalov.simpleweb.data.ResponseCode;
 
-import static com.github.ibykhalov.simpleweb.xml.data.Response.error;
-import static com.github.ibykhalov.simpleweb.xml.data.Response.successRegister;
+import static com.github.ibykhalov.simpleweb.data.Response.error;
+import static com.github.ibykhalov.simpleweb.data.Response.successRegister;
 
-public class Processor implements IProcessor {
-    private final IDatabase database;
+public class RequestProcessor {
+    private final IUserInfoDAO database;
 
-    public Processor(IDatabase database) {
+    public RequestProcessor(IUserInfoDAO database) {
         this.database = database;
     }
 
-    @Override
-    public Response processRequest(Request request) {
+    public Response process(Request request) {
         if (request.getRequestType() == RequestType.REGISTER) {
             boolean userRegistered = database.createUser(request.getLogin(), request.getPassword());
             return userRegistered ? successRegister() : error(ResponseCode.USER_ALREADY_EXISTS);
@@ -28,10 +27,10 @@ public class Processor implements IProcessor {
                 return Response.successGetBalance(userBalance.getValue());
             } else {
                 switch (userBalance.getError()) {
-                    case USER_NOT_EXISTS:
+                    case USER_NOT_FOUND:
                         return Response.error(ResponseCode.USER_NOT_FOUND);
 
-                    case WRONG_PASSWORD:
+                    case PASSWORD_INCORRECT:
                         return Response.error(ResponseCode.PASSWORD_INCORRECT);
 
                     default:

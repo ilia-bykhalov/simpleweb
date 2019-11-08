@@ -1,10 +1,10 @@
-package com.github.ibykhalov.simpleweb.xml.data;
+package com.github.ibykhalov.simpleweb.data;
 
 import com.google.common.base.Objects;
 
 import java.util.Optional;
 
-import static com.github.ibykhalov.simpleweb.xml.data.ResponseCode.OK;
+import static com.github.ibykhalov.simpleweb.data.ResponseCode.OK;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Optional.ofNullable;
 

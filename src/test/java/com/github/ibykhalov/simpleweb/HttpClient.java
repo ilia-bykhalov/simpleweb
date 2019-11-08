@@ -1,8 +1,7 @@
 package com.github.ibykhalov.simpleweb;
 
-import com.github.ibykhalov.simpleweb.webserver.Response;
+import com.github.ibykhalov.simpleweb.webserver.HttpResponse;
 import org.apache.commons.io.IOUtils;
-import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -19,7 +18,7 @@ public class HttpClient {
 
     private final CloseableHttpClient httpClient = HttpClients.createDefault();
 
-    public Response doPost(String ip, int port, String message) throws IOException {
+    public HttpResponse doPost(String ip, int port, String message) throws IOException {
         HttpPost request = new HttpPost("http://" + ip + ":" + port);
         HttpEntity requestEntity = new StringEntity(message);
         request.setEntity(requestEntity);
@@ -30,7 +29,7 @@ public class HttpClient {
 
             String result = IOUtils.toString(entity.getContent());
             logger.info("result" + result);
-            return new Response(response.getStatusLine().getStatusCode(), result);
+            return new HttpResponse(response.getStatusLine().getStatusCode(), result);
         }
     }
 }

@@ -1,20 +1,19 @@
 package com.github.ibykhalov.simpleweb.db;
 
+import com.github.ibykhalov.simpleweb.TestUtils;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static com.github.ibykhalov.simpleweb.TestUtils.TEST_DATASOURCE_CONFIG;
+import static org.junit.Assert.*;
 
 public class DatabaseTest {
-    private IDatabase database;
+    private IUserInfoDAO database;
 
     @Before
     public void setUp() throws Exception {
-        Database testDatabase = new Database();
-        testDatabase.truncate();
-        database = testDatabase;
+        TestUtils.truncateTable();
+        database = new UserInfoDAO(new DataSource(TEST_DATASOURCE_CONFIG));
     }
 
     @Test
@@ -35,7 +34,7 @@ public class DatabaseTest {
     @Test
     public void getBalanceOnUnknownUser() {
         UserBalance userBalance = database.getUserBalance("employee1", "employee1_pass");
-        assertEquals(UserBalance.error(GetBalanceError.USER_NOT_EXISTS), userBalance);
+        assertEquals(UserBalance.error(GetBalanceError.USER_NOT_FOUND), userBalance);
     }
 
     @Test
@@ -51,6 +50,6 @@ public class DatabaseTest {
         database.createUser("employee1", "employee1_pass");
 
         UserBalance userBalance = database.getUserBalance("employee1", "employee1_wrong_pass");
-        assertEquals(UserBalance.error(GetBalanceError.WRONG_PASSWORD), userBalance);
+        assertEquals(UserBalance.error(GetBalanceError.PASSWORD_INCORRECT), userBalance);
     }
 }

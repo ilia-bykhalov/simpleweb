@@ -5,6 +5,6 @@ public interface IWebServer {
     void stop();
 
     interface IRequestHandler {
-        Response execRequest(String body);
+        HttpResponse execRequest(String body);
     }
 }

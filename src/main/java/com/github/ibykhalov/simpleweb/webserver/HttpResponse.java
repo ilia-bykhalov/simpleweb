@@ -4,11 +4,11 @@ import com.google.common.base.Objects;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class Response {
+public class HttpResponse {
     private final int status;
     private final String body;
 
-    public Response(int status, String body) {
+    public HttpResponse(int status, String body) {
         this.status = status;
         this.body = checkNotNull(body);
     }
@@ -29,7 +29,7 @@ public class Response {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Response response = (Response) o;
+        HttpResponse response = (HttpResponse) o;
         return status == response.status && Objects.equal(body, response.body);
     }
 
@@ -40,6 +40,6 @@ public class Response {
 
     @Override
     public String toString() {
-        return "{\"Response\":{" + "\"status\":\"" + status + "\"" + ", \"body\":\"" + body + "\"" + "}}";
+        return "{\"HttpResponse\":{" + "\"status\":\"" + status + "\"" + ", \"body\":\"" + body + "\"" + "}}";
     }
 }

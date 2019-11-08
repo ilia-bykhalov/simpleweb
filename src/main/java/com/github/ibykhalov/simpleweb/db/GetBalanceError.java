@@ -1,6 +1,6 @@
 package com.github.ibykhalov.simpleweb.db;
 
 public enum GetBalanceError {
-    USER_NOT_EXISTS,
-    WRONG_PASSWORD
+    USER_NOT_FOUND,
+    PASSWORD_INCORRECT
 }
