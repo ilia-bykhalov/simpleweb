@@ -6,6 +6,7 @@ import com.github.ibykhalov.simpleweb.data.Request;
 import com.github.ibykhalov.simpleweb.data.RequestType;
 import com.github.ibykhalov.simpleweb.data.Response;
 import com.github.ibykhalov.simpleweb.data.ResponseCode;
+import com.github.ibykhalov.simpleweb.exception.DatabaseAccessException;
 
 import static com.github.ibykhalov.simpleweb.data.Response.error;
 import static com.github.ibykhalov.simpleweb.data.Response.successRegister;
@@ -17,7 +18,7 @@ public class RequestProcessor {
         this.database = database;
     }
 
-    public Response process(Request request) {
+    public Response process(Request request) throws DatabaseAccessException {
         if (request.getRequestType() == RequestType.REGISTER) {
             boolean userRegistered = database.createUser(request.getLogin(), request.getPassword());
             return userRegistered ? successRegister() : error(ResponseCode.USER_ALREADY_EXISTS);

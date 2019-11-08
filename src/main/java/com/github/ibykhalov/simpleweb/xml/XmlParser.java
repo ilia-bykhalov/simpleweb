@@ -1,11 +1,11 @@
 package com.github.ibykhalov.simpleweb.xml;
 
-import com.github.ibykhalov.simpleweb.exception.XmlParsingException;
-import com.github.ibykhalov.simpleweb.exception.XmlSerializationException;
 import com.github.ibykhalov.simpleweb.data.Request;
 import com.github.ibykhalov.simpleweb.data.RequestType;
 import com.github.ibykhalov.simpleweb.data.Response;
 import com.github.ibykhalov.simpleweb.data.ResponseCode;
+import com.github.ibykhalov.simpleweb.exception.XmlParsingException;
+import com.github.ibykhalov.simpleweb.exception.XmlSerializationException;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.input.SAXBuilder;
@@ -27,45 +27,58 @@ public final class XmlParser {
     public static Request parseRequest(String requestBody) throws XmlParsingException {
         try {
             SAXBuilder builder = new SAXBuilder();
-
             Document document = builder.build(new StringReader(requestBody));
             Element rootNode = document.getRootElement();
-            List<Element> list = (List<Element>) rootNode.getChildren("request-type");
-            checkState(1 == list.size());
-            String rawRequestType = list.get(0).getText();
+
+            RequestType requestType = extractRequestType(rootNode);
 
             List<Element> extraList = (List<Element>) rootNode.getChildren("extra");
             checkState(2 == extraList.size());
             String login = extractSingleExtraField(extraList, "login");
             String password = extractSingleExtraField(extraList, "password");
 
-            RequestType requestType = parseRequestType(rawRequestType);
             return new Request(requestType, login, password);
         } catch (Exception ex) {
-            throw new XmlParsingException(ex);
+            throw new XmlParsingException("body=\n" + requestBody, ex);
         }
     }
 
     public static String serialize(Response response) throws XmlSerializationException {
         try {
-            Document doc = new Document();
-            doc.setRootElement(new Element("response"));
-            Element responseCode = new Element("result-code");
-            responseCode.setText(String.valueOf(response.getResponseCode().getCode()));
-            doc.getRootElement().addContent(responseCode);
-            if (response.getResponseCode() == ResponseCode.OK && response.getBalance().isPresent()) {
-                Element balance = new Element("extra");
-                balance.setAttribute("name", "balance");
-                balance.setText(String.format("%.2f", response.getBalance().get()));
-                doc.getRootElement().addContent(balance);
-            }
+            Document document = composeDocument(response);
             XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
             StringWriter stringWriter = new StringWriter();
-            xmlOutputter.output(doc, stringWriter);
+
+            xmlOutputter.output(document, stringWriter);
             return stringWriter.toString();
         } catch (Exception ex) {
-            throw new XmlSerializationException(ex);
+            throw new XmlSerializationException("object=\n" + response, ex);
         }
+    }
+
+    private static Document composeDocument(Response response) {
+        Document document = new Document();
+        document.setRootElement(new Element("response"));
+
+        Element responseCode = new Element("result-code");
+        responseCode.setText(String.valueOf(response.getResponseCode().getCode()));
+        document.getRootElement().addContent(responseCode);
+
+        if (response.getResponseCode() == ResponseCode.OK && response.getBalance().isPresent()) {
+            Element balance = new Element("extra");
+            balance.setAttribute("name", "balance");
+            balance.setText(String.format("%.2f", response.getBalance().get()));
+            document.getRootElement().addContent(balance);
+        }
+        return document;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static RequestType extractRequestType(Element rootNode) throws XmlParsingException {
+        List<Element> list = (List<Element>) rootNode.getChildren("request-type");
+        checkState(1 == list.size());
+        String rawRequestType = list.get(0).getText();
+        return parseRequestType(rawRequestType);
     }
 
     private static String extractSingleExtraField(List<Element> extraList, String name) {

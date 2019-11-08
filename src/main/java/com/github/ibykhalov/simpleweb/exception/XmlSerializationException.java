@@ -1,6 +1,6 @@
 package com.github.ibykhalov.simpleweb.exception;
 
-public class XmlSerializationException extends MyException {
+public class XmlSerializationException extends ApplicationException {
     public XmlSerializationException() {
     }
 
@@ -16,7 +16,8 @@ public class XmlSerializationException extends MyException {
         super(cause);
     }
 
-    public XmlSerializationException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public XmlSerializationException(String message, Throwable cause, boolean enableSuppression,
+                                     boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

@@ -1,6 +1,6 @@
 package com.github.ibykhalov.simpleweb.exception;
 
-public class XmlParsingException extends MyException {
+public class XmlParsingException extends ApplicationException {
     public XmlParsingException() {
     }
 

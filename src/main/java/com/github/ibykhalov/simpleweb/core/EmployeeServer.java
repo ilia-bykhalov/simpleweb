@@ -1,15 +1,16 @@
 package com.github.ibykhalov.simpleweb.core;
 
 import com.github.ibykhalov.simpleweb.config.EmployeeServerConfig;
+import com.github.ibykhalov.simpleweb.data.Request;
+import com.github.ibykhalov.simpleweb.data.Response;
 import com.github.ibykhalov.simpleweb.db.DataSource;
 import com.github.ibykhalov.simpleweb.db.IUserInfoDAO;
 import com.github.ibykhalov.simpleweb.db.UserInfoDAO;
+import com.github.ibykhalov.simpleweb.exception.ApplicationException;
 import com.github.ibykhalov.simpleweb.webserver.HttpResponse;
 import com.github.ibykhalov.simpleweb.webserver.IWebServer;
 import com.github.ibykhalov.simpleweb.webserver.WebServer;
 import com.github.ibykhalov.simpleweb.xml.XmlParser;
-import com.github.ibykhalov.simpleweb.data.Request;
-import com.github.ibykhalov.simpleweb.data.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,8 +41,11 @@ public final class EmployeeServer {
 
             String serialize = XmlParser.serialize(response);
             return new HttpResponse(200, serialize);
+        } catch (ApplicationException ex) {
+            logger.warn("Application error", ex);
+            return UNKNOWN_ERROR_HTTP_RESPONSE;
         } catch (Exception ex) {
-            logger.error("unexpected error", ex);
+            logger.error("Unexpected error", ex);
             return UNKNOWN_ERROR_HTTP_RESPONSE;
         }
     }

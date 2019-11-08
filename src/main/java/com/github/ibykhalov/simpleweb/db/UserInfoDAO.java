@@ -1,5 +1,7 @@
 package com.github.ibykhalov.simpleweb.db;
 
+import com.github.ibykhalov.simpleweb.exception.DatabaseAccessException;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -21,7 +23,7 @@ public class UserInfoDAO implements IUserInfoDAO {
     }
 
     @Override
-    public boolean createUser(String login, String password) {
+    public boolean createUser(String login, String password) throws DatabaseAccessException {
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(CREATE_USER_QUERY);
 
@@ -36,12 +38,12 @@ public class UserInfoDAO implements IUserInfoDAO {
             return updateCount == 1;
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseAccessException(e);
         }
     }
 
     @Override
-    public UserBalance getUserBalance(String login, String password) {
+    public UserBalance getUserBalance(String login, String password) throws DatabaseAccessException {
 
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(GET_BALANCE_QUERY);
@@ -63,7 +65,7 @@ public class UserInfoDAO implements IUserInfoDAO {
                 return UserBalance.error(GetBalanceError.USER_NOT_FOUND);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new DatabaseAccessException(e);
         }
     }
 }

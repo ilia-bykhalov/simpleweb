@@ -22,9 +22,10 @@ public class WebServerTest {
         assertServerUserHandler(REQUEST_2, RESPONSE_2);
     }
 
-    private static void assertServerUserHandler(String expectedRequest, HttpResponse expectedResponse) throws IOException {
+    private static void assertServerUserHandler(String expectedRequest, HttpResponse expectedResponse)
+            throws IOException {
         AtomicReference<String> actualRequest = new AtomicReference<>();
-        WebServer webServer = new WebServer(TEST_SERVER_PORT, request -> {
+        WebServer webServer = new WebServer(TEST_SERVER_PORT, 1, request -> {
             actualRequest.set(request);
             return expectedResponse;
         });

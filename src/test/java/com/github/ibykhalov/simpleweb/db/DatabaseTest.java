@@ -17,13 +17,13 @@ public class DatabaseTest {
     }
 
     @Test
-    public void createUser() {
+    public void createUser() throws Exception {
         boolean userCreated = database.createUser("employee1", "employee1_pass");
         assertTrue(userCreated);
     }
 
     @Test
-    public void createUserTwice() {
+    public void createUserTwice() throws Exception {
         boolean userCreated = database.createUser("employee1", "employee1_pass");
         assertTrue(userCreated);
 
@@ -32,13 +32,13 @@ public class DatabaseTest {
     }
 
     @Test
-    public void getBalanceOnUnknownUser() {
+    public void getBalanceOnUnknownUser() throws Exception {
         UserBalance userBalance = database.getUserBalance("employee1", "employee1_pass");
         assertEquals(UserBalance.error(GetBalanceError.USER_NOT_FOUND), userBalance);
     }
 
     @Test
-    public void getBalanceOnCreatedUser() {
+    public void getBalanceOnCreatedUser() throws Exception {
         database.createUser("employee1", "employee1_pass");
 
         UserBalance userBalance = database.getUserBalance("employee1", "employee1_pass");
@@ -46,7 +46,7 @@ public class DatabaseTest {
     }
 
     @Test
-    public void getBalanceWrongPassword() {
+    public void getBalanceWrongPassword() throws Exception {
         database.createUser("employee1", "employee1_pass");
 
         UserBalance userBalance = database.getUserBalance("employee1", "employee1_wrong_pass");
