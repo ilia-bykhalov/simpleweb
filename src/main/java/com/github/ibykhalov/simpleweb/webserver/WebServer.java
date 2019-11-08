@@ -10,6 +10,9 @@ import java.net.SocketTimeoutException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantLock;
 
 public final class WebServer implements IWebServer {
     private static final Logger logger = LoggerFactory.getLogger(WebServer.class);
@@ -20,7 +23,9 @@ public final class WebServer implements IWebServer {
     private final int workersCount;
     private final IRequestHandler requestHandler;
 
-    private final ServerStateLatch serverStateLatch = new ServerStateLatch();
+    private final ReentrantLock stopStartLock = new ReentrantLock();
+    private final AtomicBoolean isRunning = new AtomicBoolean(false);
+    private final AtomicReference<Thread> socketAccepterThread = new AtomicReference<>(new Thread());
 
     public WebServer(int port, int workersCount, IRequestHandler requestHandler) {
         this.port = port;
@@ -30,35 +35,50 @@ public final class WebServer implements IWebServer {
 
     @Override
     public void start() {
-        if (serverStateLatch.tryStartServer()) {
-            startServer();
+        try {
+            stopStartLock.lock();
+            if (isRunning.compareAndSet(false, true)) {
+                socketAccepterThread.set(startServer());
+            }
+        } finally {
+            stopStartLock.unlock();
         }
     }
 
     @Override
     public void stop() {
-        serverStateLatch.beginAndAwaitShutDown();
+        try {
+            stopStartLock.lock();
+            isRunning.set(false);
+            try {
+                socketAccepterThread.get().join();
+            } catch (InterruptedException ex) {
+                logger.error("error while shutting down", ex);
+            }
+        } finally {
+            stopStartLock.unlock();
+        }
     }
 
-    private void startServer() {
+    private Thread startServer() {
         ServerSocket server = startSocketServer();
         ExecutorService threadPool = Executors.newFixedThreadPool(workersCount);
 
-        new Thread(() -> {
+        Thread socketAccepterThread = new Thread(() -> {
             try {
-                socketAccepterCycle(server, threadPool);
+                socketAccepterLoop(server, threadPool);
             } catch (Exception ex) {
                 logger.error("", ex);
             } finally {
                 shutDownQuietly(server, threadPool);
-                serverStateLatch.completeShutDown();
             }
-        }).start();
+        });
+        socketAccepterThread.start();
+        return socketAccepterThread;
     }
 
-
-    private void socketAccepterCycle(ServerSocket server, ExecutorService threadPool) {
-        while (serverStateLatch.isRunning()) {
+    private void socketAccepterLoop(ServerSocket server, ExecutorService threadPool) {
+        while (isRunning.get()) {
             try {
                 Socket socket = server.accept();
 

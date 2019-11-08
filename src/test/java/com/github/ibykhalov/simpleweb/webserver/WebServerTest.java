@@ -35,8 +35,9 @@ public class WebServerTest {
             HttpClient httpClient = new HttpClient();
             HttpResponse actualResponse = httpClient.doPost(TEST_SERVER_IP, TEST_SERVER_PORT, expectedRequest);
 
-            assertEquals(expectedResponse, actualResponse);
             assertEquals(expectedRequest, actualRequest.get());
+            assertEquals(expectedResponse.getStatus(), actualResponse.getStatus());
+            assertEquals(expectedResponse.getBody(), actualResponse.getBody());
         } finally {
             webServer.stop();
         }

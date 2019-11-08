@@ -44,7 +44,6 @@ public final class UserInfoDAO implements IUserInfoDAO {
 
     @Override
     public UserBalance getUserBalance(String login, String password) throws DatabaseAccessException {
-
         try (Connection connection = dataSource.getConnection()) {
             PreparedStatement statement = connection.prepareStatement(GET_BALANCE_QUERY);
 
@@ -53,7 +52,9 @@ public final class UserInfoDAO implements IUserInfoDAO {
             statement.execute();
             ResultSet resultSet = statement.getResultSet();
 
-            if (resultSet.next()) {
+            if (!resultSet.next()) {
+                return UserBalance.error(GetBalanceError.USER_NOT_FOUND);
+            } else {
                 int balance = resultSet.getInt(1);
                 String pass = resultSet.getString(2);
                 if (password.equals(pass)) {
@@ -61,8 +62,6 @@ public final class UserInfoDAO implements IUserInfoDAO {
                 } else {
                     return UserBalance.error(GetBalanceError.PASSWORD_INCORRECT);
                 }
-            } else {
-                return UserBalance.error(GetBalanceError.USER_NOT_FOUND);
             }
         } catch (SQLException e) {
             throw new DatabaseAccessException(e);

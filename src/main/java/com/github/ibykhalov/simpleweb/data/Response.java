@@ -1,7 +1,5 @@
 package com.github.ibykhalov.simpleweb.data;
 
-import com.google.common.base.Objects;
-
 import java.util.Optional;
 
 import static com.github.ibykhalov.simpleweb.data.ResponseCode.OK;
@@ -10,9 +8,9 @@ import static java.util.Optional.ofNullable;
 
 public final class Response {
     private final ResponseCode responseCode;
-    private final Double balance;
+    private final Integer balance;
 
-    private Response(ResponseCode responseCode, Double balance) {
+    private Response(ResponseCode responseCode, Integer balance) {
         this.responseCode = checkNotNull(responseCode);
         this.balance = balance;
     }
@@ -21,7 +19,7 @@ public final class Response {
         return new Response(OK, null);
     }
 
-    public static Response successGetBalance(double balance) {
+    public static Response successGetBalance(int balance) {
         return new Response(OK, balance);
     }
 
@@ -33,25 +31,8 @@ public final class Response {
         return responseCode;
     }
 
-    public Optional<Double> getBalance() {
+    public Optional<Integer> getBalance() {
         return ofNullable(balance);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Response response = (Response) o;
-        return responseCode == response.responseCode && Objects.equal(balance, response.balance);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hashCode(responseCode, balance);
     }
 
     @Override

@@ -35,13 +35,15 @@ public final class RequestProcessor {
 
     private Response register(Request request) throws DatabaseAccessException {
         boolean userRegistered = database.createUser(request.getLogin(), request.getPassword());
-        return userRegistered ? Response.successRegister() : Response.error(ResponseCode.USER_ALREADY_EXISTS);
+        return userRegistered
+                ? Response.successRegister()
+                : Response.error(ResponseCode.USER_ALREADY_EXISTS);
     }
 
     private Response getBalance(Request request) throws DatabaseAccessException {
         UserBalance userBalance = database.getUserBalance(request.getLogin(), request.getPassword());
         if (userBalance.hasValue()) {
-            return Response.successGetBalance((double) userBalance.getValue() / 100);
+            return Response.successGetBalance(userBalance.getValue());
         } else {
             switch (userBalance.getError()) {
                 case USER_NOT_FOUND:

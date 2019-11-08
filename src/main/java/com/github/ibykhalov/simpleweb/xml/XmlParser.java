@@ -67,10 +67,15 @@ public final class XmlParser {
         if (response.getResponseCode() == ResponseCode.OK && response.getBalance().isPresent()) {
             Element balance = new Element("extra");
             balance.setAttribute("name", "balance");
-            balance.setText(String.format("%.2f", response.getBalance().get()));
+            balance.setText(formatBalance(response.getBalance().get()));
             document.getRootElement().addContent(balance);
         }
         return document;
+    }
+
+    private static String formatBalance(int balance) {
+        double floatBalance = (double) balance / 100;
+        return String.format("%.2f", floatBalance);
     }
 
     @SuppressWarnings("unchecked")

@@ -74,7 +74,7 @@ public class XmlParserTest {
 
     @Test
     public void serializeGetBalanceOkResponse() throws Exception {
-        Response okResponse = Response.successGetBalance(99d);
+        Response okResponse = Response.successGetBalance(9900);
 
         String serialized = XmlParser.serialize(okResponse);
         String exprected = getTestString("get_balance_response_ok");
