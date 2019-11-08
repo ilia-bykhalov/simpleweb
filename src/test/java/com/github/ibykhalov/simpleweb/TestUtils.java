@@ -29,7 +29,7 @@ public final class TestUtils {
     public static final int TEST_SERVER_PORT = 8888;
 
     public static final DatasourceConfig TEST_DATASOURCE_CONFIG =
-            new DatasourceConfig("jdbc:postgresql://localhost:5400/billing_test", "postgres", "docker", 1);
+            new DatasourceConfig("jdbc:postgresql://localhost:5400/simpleweb_test", "postgres", "docker", 1);
     public static final EmployeeServerConfig TEST_EMPLOYEE_SERVER_CONFIG =
             new EmployeeServerConfig(TEST_SERVER_PORT, 1, TEST_DATASOURCE_CONFIG);
 
