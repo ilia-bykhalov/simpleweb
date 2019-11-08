@@ -4,7 +4,7 @@ import com.google.common.base.Objects;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-public class HttpResponse {
+public final class HttpResponse {
     private final int status;
     private final String body;
 

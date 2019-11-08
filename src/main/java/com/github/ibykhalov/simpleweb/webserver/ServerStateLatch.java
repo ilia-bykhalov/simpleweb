@@ -6,7 +6,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.locks.ReentrantLock;
 
 
-public class ServerStateLatch {
+public final class ServerStateLatch {
     private final ReentrantLock latchAccessLock = new ReentrantLock();
     private volatile CountDownLatch latch = new CountDownLatch(0);
 

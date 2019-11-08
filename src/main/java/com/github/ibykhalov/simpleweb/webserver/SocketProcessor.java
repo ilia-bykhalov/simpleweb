@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.net.Socket;
 
-public class SocketProcessor implements Runnable {
+public final class SocketProcessor implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(SocketProcessor.class);
 
     private final Socket socket;

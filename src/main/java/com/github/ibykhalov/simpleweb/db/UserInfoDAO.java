@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.UUID;
 
-public class UserInfoDAO implements IUserInfoDAO {
+public final class UserInfoDAO implements IUserInfoDAO {
     private static final String CREATE_USER_QUERY =
             "insert into userinfo(id,login,pass,balance) values(?,?,?,?) ON CONFLICT DO NOTHING;";
 

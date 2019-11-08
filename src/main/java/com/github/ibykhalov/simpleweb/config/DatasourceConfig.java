@@ -1,6 +1,6 @@
 package com.github.ibykhalov.simpleweb.config;
 
-public class DatasourceConfig {
+public final class DatasourceConfig {
     private final String url;
     private final String user;
     private final String password;

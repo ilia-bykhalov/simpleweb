@@ -6,7 +6,7 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class DataSource {
+public final class DataSource {
     private static final String DRIVER_CLASS_NAME = "org.postgresql.Driver";
     private final BasicDataSource basicDataSource = new BasicDataSource();
 

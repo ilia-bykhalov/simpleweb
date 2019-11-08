@@ -1,6 +1,6 @@
 package com.github.ibykhalov.simpleweb.config;
 
-public class EmployeeServerConfig {
+public final class EmployeeServerConfig {
     private final int serverPort;
     private final int workersCount;
     private final DatasourceConfig datasourceConfig;

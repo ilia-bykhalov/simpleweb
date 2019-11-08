@@ -13,10 +13,11 @@ public final class Main {
     private static final Logger logger = LoggerFactory.getLogger(Main.class);
 
     private Main() {
+        throw new UnsupportedOperationException();
     }
 
     public static void main(String[] args) {
-        logger.info("starting with args" + Arrays.toString(args));
+        logger.info("starting with args " + Arrays.toString(args));
 
         EmployeeServerConfig employeeServerConfig = ConfigLoader.fromArgs(args);
         EmployeeServer employeeServer = new EmployeeServer(employeeServerConfig);

@@ -17,10 +17,14 @@ import org.slf4j.LoggerFactory;
 public final class EmployeeServer {
     private static final Logger logger = LoggerFactory.getLogger(EmployeeServer.class);
 
-    private static final String UNKNOWN_ERROR_BODY_RESPONSE =
-            "<?xml version=\"1.0\" encoding=\"utf-8\"?> <response> <result-code>2</result-code> </response>";
+    private static final String UNKNOWN_ERROR_BODY_RESPONSE;
+    private static final HttpResponse UNKNOWN_ERROR_HTTP_RESPONSE;
 
-    private static final HttpResponse UNKNOWN_ERROR_HTTP_RESPONSE = new HttpResponse(200, UNKNOWN_ERROR_BODY_RESPONSE);
+    static {
+        UNKNOWN_ERROR_BODY_RESPONSE =
+                "<?xml version=\"1.0\" encoding=\"utf-8\"?> <response> <result-code>2</result-code> </response>";
+        UNKNOWN_ERROR_HTTP_RESPONSE = new HttpResponse(200, UNKNOWN_ERROR_BODY_RESPONSE);
+    }
 
     private final IWebServer webServer;
     private final RequestProcessor requestProcessor;

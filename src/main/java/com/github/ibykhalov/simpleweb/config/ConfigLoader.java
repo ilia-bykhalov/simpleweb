@@ -29,17 +29,16 @@ public final class ConfigLoader {
             int serverPort = config.getInt("employee-server-config.serverPort");
             int workersCount = config.getInt("employee-server-config.workersCount");
 
-            Config datasourceConfig = config.getConfig("employee-server-config.datasource");
+            Config rawDsConfig = config.getConfig("employee-server-config.datasource");
 
-            String datasourceUrl = datasourceConfig.getString("url");
-            String datasourceUser = datasourceConfig.getString("user");
-            String datasourcePassword = datasourceConfig.getString("password");
-            int databaseConnectionPoolSize = datasourceConfig.getInt("connectionPoolSize");
+            String datasourceUrl = rawDsConfig.getString("url");
+            String datasourceUser = rawDsConfig.getString("user");
+            String datasourcePassword = rawDsConfig.getString("password");
+            int databaseConnectionPoolSize = rawDsConfig.getInt("connectionPoolSize");
 
-            return new EmployeeServerConfig(serverPort, workersCount,
-                                            new DatasourceConfig(datasourceUrl, datasourceUser, datasourcePassword,
-                                                                 databaseConnectionPoolSize)
-            );
+            DatasourceConfig datasourceConfig =
+                    new DatasourceConfig(datasourceUrl, datasourceUser, datasourcePassword, databaseConnectionPoolSize);
+            return new EmployeeServerConfig(serverPort, workersCount, datasourceConfig);
         } catch (ConfigException ex) {
             throw new IllegalArgumentException("wrong config file: " + configPath, ex);
         }

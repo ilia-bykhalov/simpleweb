@@ -11,7 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-public class WebServer implements IWebServer {
+public final class WebServer implements IWebServer {
     private static final Logger logger = LoggerFactory.getLogger(WebServer.class);
 
     private static final int SOCKET_TIMEOUT = 1000;

@@ -8,7 +8,7 @@ import static com.github.ibykhalov.simpleweb.data.ResponseCode.OK;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static java.util.Optional.ofNullable;
 
-public class Response {
+public final class Response {
     private final ResponseCode responseCode;
     private final Double balance;
 
