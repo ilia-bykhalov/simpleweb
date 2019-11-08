@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<request>
+    <request-type>CREATE-AGT</request-type>
+    <extra name="login">employee1</extra>
+    <extra name="password">employee1_pass</extra>
+</request>

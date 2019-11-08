@@ -102,7 +102,7 @@ public class XmlParserTest {
     }
 
     private String getFileText(String fileName) throws IOException {
-        URL url = Resources.getResource(fileName + ".xml");
+        URL url = Resources.getResource("xmlparsertest/" + fileName + ".xml");
         return Resources.toString(url, Charsets.UTF_8);
     }
 

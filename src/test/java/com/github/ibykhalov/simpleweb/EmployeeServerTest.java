@@ -1,11 +1,22 @@
 package com.github.ibykhalov.simpleweb;
 
 import com.github.ibykhalov.simpleweb.webserver.Response;
+import com.google.common.base.Charsets;
+import com.google.common.io.Resources;
+import org.jdom.Document;
+import org.jdom.input.SAXBuilder;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.net.URL;
 
 import static org.junit.Assert.assertEquals;
 
@@ -35,37 +46,35 @@ public class EmployeeServerTest {
 
     @Test
     public void shouldAnswer() throws Exception {
-
-
-        Response result = httpClient.doPost(defaultIp, defaultPort,
-                                                       "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + "<request>\n" +
-                                                       "<request-type>CREATE-AGT</request-type>\n" +
-                                                       "<extra name=\"login\">123456</extra>\n" +
-                                                       "<extra name=\"password\">pwd</extra>\n" + "</request>"
-        );
+        Response result = httpClient.doPost(defaultIp, defaultPort, getFileText("register_request"));
 
         assertEquals(200, result.getStatus());
-        assertEquals("<?xml version=\"1.0\" encoding=\"utf-8\"?><response><result-code>0</result-code></response>",
-                     result.getBody()
-        );
+        assertEquals(prettyAsXml(getFileText("register_response_ok")), prettyAsXml(result.getBody()));
     }
 
     @Test
     public void shouldReturnZeroBalanceForRegisteredClient() throws Exception {
-        shouldAnswer();
+        httpClient.doPost(defaultIp, defaultPort, getFileText("register_request"));
 
         Response result = httpClient.doPost(defaultIp, defaultPort,
-                                                       "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + "<request>\n" +
-                                                       "<request-type>GET-BALANCE</request-type>\n" +
-                                                       "<extra name=\"login\">123456</extra>\n" +
-                                                       "<extra name=\"password\">pwd</extra>\n" + "</request>"
+                                            getFileText("get_balance_request")
         );
 
-        String expectedBody = "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n" + "<response>\n" +
-                              "<result-code>0</result-code>\n" + "<extra name=\"balance\">100.00</extra>\n" +
-                              "</response>";
         assertEquals(200, result.getStatus());
-        assertEquals(expectedBody, result.getBody());
+        assertEquals(prettyAsXml(getFileText("get_balance_response_ok")), prettyAsXml(result.getBody()));
 
+    }
+
+    private String getFileText(String fileName) throws IOException {
+        URL url = Resources.getResource("employeeservertest/" + fileName + ".xml");
+        return Resources.toString(url, Charsets.UTF_8);
+    }
+
+    private static String prettyAsXml(String input) throws Exception {
+        Document xml = new SAXBuilder().build(new StringReader(input));
+        XMLOutputter xmlOutputter = new XMLOutputter(Format.getPrettyFormat());
+        StringWriter stringWriter = new StringWriter();
+        xmlOutputter.output(xml, stringWriter);
+        return stringWriter.toString();
     }
 }

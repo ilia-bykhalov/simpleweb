@@ -45,8 +45,8 @@ public class Response {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Response that = (Response) o;
-        return Double.compare(that.balance, balance) == 0 && responseCode == that.responseCode;
+        Response response = (Response) o;
+        return responseCode == response.responseCode && Objects.equal(balance, response.balance);
     }
 
     @Override
